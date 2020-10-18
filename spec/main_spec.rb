@@ -1,4 +1,6 @@
-describe 'database' do
+# frozen_string_literal: true
+
+describe 'database' do # rubocop:disable Metrics/BlockLength
   def run_script(commands)
     raw_output = nil
     IO.popen('./a.out', 'r+') do |pipe|
@@ -75,6 +77,23 @@ describe 'database' do
     expect(result).to match_array(
       [
         'db > String is too long.',
+        'db > Executed.',
+        'db > '
+      ]
+    )
+  end
+
+  it 'prints an error message if id is negative' do
+    script = [
+      'insert -1 cstack foo@bar.com',
+      'select',
+      '.exit'
+    ]
+    result = run_script(script)
+
+    expect(result).to match_array(
+      [
+        'db > ID must be positive.',
         'db > Executed.',
         'db > '
       ]
